@@ -36,6 +36,9 @@ class MyHomePage extends StatelessWidget {
         ChangeNotifierProvider<CountData2>(
           create: (context) => CountData2(),
         ),
+        ChangeNotifierProvider<ChangeForm>(
+          create: (context) => ChangeForm(),
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -53,6 +56,29 @@ class MyHomePage extends StatelessWidget {
                 'aaaaa',
                 style: Theme.of(context).textTheme.headline4,
               ),
+              Consumer<ChangeForm>(builder: (context, model, child) {
+                return Column(
+                  children: <Widget>[
+                    Center(
+                      child: new Icon(
+                        Icons.thumb_up,
+                        color: model._active
+                            ? Colors.orange[700]
+                            : Colors.grey[500],
+                        size: 100.0,
+                      ),
+                    ),
+                    Switch(
+                      value: model._active,
+                      activeColor: Colors.orange,
+                      activeTrackColor: Colors.red,
+                      inactiveThumbColor: Colors.blue,
+                      inactiveTrackColor: Colors.green,
+                      onChanged: model._changeSwitch,
+                    ),
+                  ],
+                );
+              }),
               Consumer<CountData2>(builder: (context, model, child) {
                 return FloatingActionButton(
                   // onPressed: _incrementCounter,
@@ -103,6 +129,16 @@ class CountData2 extends ChangeNotifier {
     count = count + 1;
     // 値が変更したことを知らせる
     //  >> UIを再構築する
+    notifyListeners();
+  }
+}
+
+class ChangeForm extends ChangeNotifier {
+  bool _active = false;
+
+  // void _changeSwitch(bool e) => setState(() => _active = e);
+  void _changeSwitch(bool e) {
+    _active = e;
     notifyListeners();
   }
 }

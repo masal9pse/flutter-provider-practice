@@ -33,6 +33,9 @@ class MyHomePage extends StatelessWidget {
         ChangeNotifierProvider<CountData>(
           create: (context) => CountData(),
         ),
+        ChangeNotifierProvider<CountData2>(
+          create: (context) => CountData2(),
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -50,22 +53,33 @@ class MyHomePage extends StatelessWidget {
                 'aaaaa',
                 style: Theme.of(context).textTheme.headline4,
               ),
+              Consumer<CountData2>(builder: (context, model, child) {
+                return FloatingActionButton(
+                  // onPressed: _incrementCounter,
+                  onPressed: () {
+                    model.increment();
+                  },
+                  tooltip: 'Increment',
+                  // child: const Icon(Icons.add),
+                  child: Text(model.count.toString()),
+                );
+              }),
             ],
           ),
         ),
-        floatingActionButton: Consumer<CountData>(builder: (context, model, child) {
-            return FloatingActionButton(
-              // onPressed: _incrementCounter,
-              onPressed: (){
-                model.increment();
-              },
-              tooltip: 'Increment',
-              // child: const Icon(Icons.add),
-              child: Text(model.count.toString()),
-            );
-          }
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-      ),
+        floatingActionButton:
+            Consumer<CountData>(builder: (context, model, child) {
+          return FloatingActionButton(
+            // onPressed: _incrementCounter,
+            onPressed: () {
+              model.increment();
+            },
+            tooltip: 'Increment',
+            // child: const Icon(Icons.add),
+            child: Text(model.count.toString()),
+          );
+        }),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
@@ -73,6 +87,17 @@ class MyHomePage extends StatelessWidget {
 // ChangeNotifierを継承すると変更可能なデータを渡せる
 class CountData extends ChangeNotifier {
   int count = 0;
+
+  void increment() {
+    count = count + 1;
+    // 値が変更したことを知らせる
+    //  >> UIを再構築する
+    notifyListeners();
+  }
+}
+
+class CountData2 extends ChangeNotifier {
+  int count = 10;
 
   void increment() {
     count = count + 1;

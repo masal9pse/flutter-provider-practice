@@ -16,31 +16,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({Key? key, required this.title}) : super(key: key);
-//
-//   final String title;
-//
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-
 class MyHomePage extends StatelessWidget {
-  int _counter = 0;
   final String title;
 
   MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // void _incrementCounter() {
-  //   setState(() {
-  //     _counter++;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -52,30 +36,34 @@ class MyHomePage extends StatelessWidget {
       ],
       child: Scaffold(
         appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: Text(this.title),
         ),
         body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Text(
-                'ボタンを押した回数:',
+                'ボタンを押した回数:です',
               ),
               Text(
-                '$_counter',
+                // '$model',
+                'aaaaa',
                 style: Theme.of(context).textTheme.headline4,
               ),
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _incrementCounter,
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
+        floatingActionButton: Consumer<CountData>(builder: (context, model, child) {
+            return FloatingActionButton(
+              // onPressed: _incrementCounter,
+              onPressed: (){
+                model.increment();
+              },
+              tooltip: 'Increment',
+              // child: const Icon(Icons.add),
+              child: Text(model.count.toString()),
+            );
+          }
         ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );

@@ -1,169 +1,72 @@
-// @dart=2.9
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<ResultProvider>(
-          create: (context) => ResultProvider(),
-        ),
-      ],
-      child: MaterialApp(
-        home: MyHomePage(),
-      ),
-    ),
-  );
+  runApp(const MyApp());
 }
 
-class ResultProvider extends ChangeNotifier {
-  String _result;
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-  ResultProvider() {
-    initValue();
-  }
-
-  // 初期化
-  void initValue() {
-    this._result = "遷移先に移動です";
-  }
-
-  void refresh() {
-    initValue();
-    notifyListeners(); // Providerを介してConsumer配下のWidgetがリビルドされる
-  }
-
-  void updateText(String str) {
-    _result = str;
-  }
-
-  void notify() {
-    notifyListeners(); // Providerを介してConsumer配下のWidgetがリビルドされる
-  }
-}
-
-// 遷移元ページ
-class MyHomePage extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // テキスト表示
-    Widget _renderText(ResultProvider model) {
-      // print('text:${model._result}');
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              model._result, // ResultProviderのプロパティ
-              style: Theme.of(context).textTheme.headline5,
-            ),
-            RaisedButton(
-              child: Text('Go to Edit Pageです'),
-              onPressed: () async {
-                model.updateText('Hello! from HomePage.');
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                    // 引数に遷移元から遷移先へ渡す値を設定
-                    EditPage(),
-                  ),
-                );
-                // print(result);
-                model.notify(); // ResultProviderのメソッド
-              },
-            ),
-          ],
-        ),
-      );
-    }
-
-    // サンプル１：Scaffold全体をリビルド
-    return Consumer<ResultProvider>(builder: (context, model, _) {
-      return Scaffold(
-        appBar: appBar(),
-        body: _renderText(model),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            model.refresh();
-          },
-          child: Icon(
-            Icons.refresh,
-          ),
-        ),
-      );
-    });
-
-    // サンプル２：appBar以外をリビルド
-    // return Scaffold(
-    //   appBar: appBar(),
-    //   body: Consumer<ResultProvider>(builder: (context, model, _) {
-    //     return _renderText(model);
-    //   }),
-    //   floatingActionButton:
-    //   Consumer<ResultProvider>(builder: (context, model, _) {
-    //     return FloatingActionButton(
-    //       onPressed: () {
-    //         model.refresh(); // ResultProviderのメソッド
-    //       },
-    //       child: Icon(
-    //         Icons.refresh,
-    //       ),
-    //     );
-    //   }),
-    // );
-  }
-
-  appBar() {
-    print('appBar実行');
-    return AppBar(
-      title: Text('My Home Page（遷移元）'),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-// 遷移先ページ
-class EditPage extends StatelessWidget {
-  final receive;
-  const EditPage({Key key, this.receive}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ResultProvider>(
-      builder: (context, model, child) {
-        return WillPopScope(
-          onWillPop: () {
-            model.updateText('Thank you! from 戻るアイコン'); // ResultProviderのメソッド
-            Navigator.pop(context);
-            return Future.value(false);
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text('Edit Page（遷移先）'),
+    return Scaffold(
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'ボタンを押した回数:',
             ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    model._result,
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  RaisedButton(
-                      child: Text('Return'),
-                      onPressed: () {
-                        model.updateText(
-                            'Thank you! from 戻るボタン'); // ResultProviderのメソッド
-                        Navigator.pop(context);
-                      }),
-                ],
-              ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headline4,
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
